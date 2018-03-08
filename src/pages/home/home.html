@@ -5,13 +5,28 @@
 </ion-header>
 
 <ion-content padding>
-  <h2>Welcome to Ionic!</h2>
-  <p>
-    This starter project comes with simple tabs-based layout for apps
-    that are going to primarily use a Tabbed UI.
-  </p>
-  <p>
-    Take a look at the <code>src/pages/</code> directory to add or change tabs,
-    update any existing page or create new pages.
-  </p>
+  <section class="preference">
+
+    <div>
+      <div class="caption red">Red</div>
+      <label for="red" class="brightness fa">
+        <input id="red" type="range" min="0" max="255" step="1" value="0">
+      </label>
+    </div>
+
+    <div>
+      <div class="caption green">Green</div>
+      <label for="green" class="brightness fa">
+        <input id="green" type="range" min="0" max="255" step="1" value="0">
+      </label>
+    </div>
+
+    <div>
+      <div class="caption blue">Blue</div>
+      <label for="blue" class="brightness fa">
+        <input id="blue" type="range" min="0" max="255" step="1" value="0">
+      </label>
+    </div>
+
+  </section>
 </ion-content>

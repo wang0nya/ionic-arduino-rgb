@@ -18,6 +18,9 @@
   <!-- cordova.js required for cordova apps (remove if not needed) -->
   <script src="cordova.js"></script>
 
+  <!-- PubNub -->
+  <script src="http://cdn.pubnub.com/pubnub-3.7.15.min.js"></script>
+
   <!-- un-comment this code to enable service worker
   <script>
     if ('serviceWorker' in navigator) {
@@ -28,6 +31,7 @@
   </script>-->
 
   <link href="build/main.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
 </head>
 <body>
@@ -44,6 +48,80 @@
 
   <!-- The main bundle js is generated during the build process -->
   <script src="build/main.js"></script>
+
+  <script>
+(function(){
+
+  var pubnub = PUBNUB.init({
+    publish_key: 'pub-c-e6b800c0-5c28-4b3d-bdfa-8976cc531a45',
+    subscribe_key: 'sub-c-c07e3554-22ee-11e8-9bf4-060db84035e6'
+  });
+
+  var channel = 'hue-clone';
+
+  var red = document.getElementById('red');
+  var green = document.getElementById('green');
+  var blue = document.getElementById('blue');
+
+  // Initial brightness state
+  var brightness = {r: 0, g: 0, b: 0};
+
+
+  // UI Reset: Subscribe data from all subscibers of the channel to set the state correctly
+
+  pubnub.subscribe({
+    channel: channel,
+    message: resetSliders, // reset the slider UI every time a subscriber makes a change
+    connect: initSliders // initialize the slider states for the fisrt time launching the app
+  });
+
+  function resetSliders(m) {
+    red.value = brightness.r = m.r;
+    green.value = brightness.g = m.g;
+    blue.value = brightness.b = m.b;
+  }
+
+  function initSliders() {
+    pubnub.history({
+      channel: channel,
+      count: 1,
+      callback: function(messages) {
+        messages[0].forEach(function(m) {
+          console.log(m);
+          resetSliders(m);
+        });
+      }
+    });
+  }
+
+  function publishUpdate(data) {
+    console.log(data);
+
+    pubnub.publish({
+      channel: channel,
+      message: data
+    });
+  }
+
+  // UI EVENTS
+
+  document.getElementById("red").addEventListener('change', function(e){
+    brightness.r = this.value;
+    publishUpdate(brightness);
+  }, false);
+
+  green.addEventListener('change', function(e){
+    brightness.g = this.value;
+    publishUpdate(brightness);
+  }, false);
+
+  blue.addEventListener('change', function(e){
+    brightness.b = this.value;
+    publishUpdate(brightness);
+  }, false);
+
+})();
+  </script>
 
 </body>
 </html>
